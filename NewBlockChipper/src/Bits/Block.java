@@ -1,5 +1,7 @@
 package Bits;
 
+import static java.lang.Math.random;
+
 /**
  * Kelas ini untuk merepresentasikan block
  * @author William Sentosa
@@ -15,6 +17,11 @@ public class Block {
         for(int i=0; i<size; i++) {
             bits[i] = new Bit();
         }
+    }
+    
+    public Block(Bit[] bits) {
+        this.bits = bits;
+        this.size = bits.length;
     }
     
     public int getSize() {
@@ -63,47 +70,54 @@ public class Block {
         return result;
     }
     
+//    private void printMatrix(Bit[][] bits) {
+//        for(int i=0; i<bits.length; i++) {
+//            for(int j=0; j<bits[i].length; j++) {
+//                System.out.print(bits[i][j]);
+//            }
+//            System.out.println();
+//        }
+//    }
     
     /**
      * Melakukan fungsi f dengan key tertentu
      * @param key sub key dari kunci internal
      */
     public void fFunction(Bit[] subKey) {
-        // Not Implemented Yet
         Bit[][] matrix = convertToMatrix(bits, 4);
         Boolean temp;
         for(int i=0; i<subKey.length; i++) {
             if(i/4 == 0 || i/4 == 2) { // Pergeseran elemen pada baris
                 if(subKey[i].convertToInt() == 0) { // Geser Kiri
                     temp = matrix[i%4][0].getValue();
-                    for(int j=1; j>4; j++) {
+                    for(int j=1; j<4; j++) {
                         matrix[i%4][j-1].setValue(matrix[i%4][j].getValue());
                     }
-                    matrix[i%4][4].setValue(temp);
+                    matrix[i%4][3].setValue(temp);
                 } else {
-                    temp = matrix[i%4][4].getValue();
+                    temp = matrix[i%4][3].getValue();
                     for(int j=2; j>=0; j--) {
                         matrix[i%4][j+1].setValue(matrix[i%4][j].getValue());
                     }
                     matrix[i%4][0].setValue(temp);
                 }
                 // Xor perbaris
-                for(int j=0; j<4; j++) { // Geser Kanan
+                for(int j=0; j<4; j++) {
                     matrix[i%4][j].setValue(matrix[i%4][j].getValue() ^ subKey[i].getValue());
                 }
             } else if(i/4 == 1 || i/4 == 3) { // pergeseran elemen per kolom
-                if(subKey[i].convertToInt() == 0) { // Geser Kiri
+                if(subKey[i].convertToInt() == 0) { // Geser Atas
                     temp = matrix[0][i%4].getValue();
-                    for(int j=3; j>0; j--) {
-                        matrix[j][i%4].setValue(matrix[j-1][i%4].getValue());
+                    for(int j=1; j<4; j++) {
+                        matrix[j-1][i%4].setValue(matrix[j][i%4].getValue());
                     }
-                    matrix[i%4][4].setValue(temp);
-                } else { // belom di implementasi
-                    for(int j=0; j<4; j++) { // Geser Kanan
-                        temp = matrix[j][i%4].getValue();
-                        matrix[j][i%4].setValue(matrix[(j+1)%4][i%4].getValue());
-                        matrix[(j+1)%4][i%4].setValue(temp);
+                    matrix[3][i%4].setValue(temp);
+                } else { // Geser bawah
+                    temp = matrix[3][i%4].getValue();
+                    for(int j=2; j>=0; j--) {
+                        matrix[j+1][i%4].setValue(matrix[j][i%4].getValue());
                     }
+                    matrix[0][i%4].setValue(temp);
                 }
                 // Xor perbaris
                 for(int j=0; j<4; j++) { // Geser Kanan
@@ -114,5 +128,23 @@ public class Block {
         
     }
     
+    public static void main(String args[]) {
+        Block block = new Block();
+        Bit[] bits = new Bit[16];
+        for(int i=0; i<16; i++) {
+            bits[i] = new Bit(((int)(Math.random()*100))%2 == 0 );
+        }
+        System.out.println();
+        block.setBits(bits);
+        System.out.println(block);
+        Bit[] key = new Bit[16];
+        for(int i=0; i<16; i++) {
+            key[i] = new Bit(((int)(Math.random()*10))%2 == 0 );
+            System.out.print(key[i]);
+        }
+        System.out.println();
+        block.fFunction(key);
+        System.out.println(block);
+    }
     
 }
