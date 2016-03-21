@@ -27,6 +27,10 @@ public class Key {
         setKey(key, size);
     }
     
+    public int getSize() {
+        return size;
+    }
+    
     public Bit[] getBits() {
         return bits;
     }

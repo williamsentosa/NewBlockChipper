@@ -29,7 +29,7 @@ public class Text {
      */
     public Text(String text, int sizeOfBits) {
         sizeOfBlocks = sizeOfBits / Block.getDefaultSize();
-        // Ubah dari string text ke blocks
+        setText(text);
     }
     
     public Block[] getBlocks() {
@@ -38,6 +38,10 @@ public class Text {
     
     public void setBlocks(Block[] blocks) {
         this.blocks = blocks;
+    }
+    
+    public void setText(String text) {
+        // Ubah dari string ke blocks
     }
     
     public String toString() {
