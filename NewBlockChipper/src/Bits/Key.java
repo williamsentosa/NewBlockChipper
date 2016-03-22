@@ -77,7 +77,7 @@ public class Key {
     }
     
     public void setEncryptedKey() throws UnsupportedEncodingException{
-        encryptedKey = VC.Encrypt(keyText, generateKeyForVigenere(), 256);
+        encryptedKey = VC.Encrypt(keyText, generateKeyForVigenere(), 26);
     }
     
     @Override
@@ -179,7 +179,7 @@ public class Key {
     
     public static void main (String[] args) throws UnsupportedEncodingException {
         Key keyy = new Key();
-        keyy.setKey("nama",128);
+        keyy.setKey("RANDICHILYONALFIANTO",128);
         Block[] a = keyy.getKeyBlock();
         for(int i = 0;i<a.length;i++){
             System.out.println(a[i]);
