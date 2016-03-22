@@ -124,8 +124,51 @@ public class Block {
                     matrix[j][i%4].setValue(matrix[j][i%4].getValue() ^ subKey[i].getValue());
                 }
             }
+        } 
+    }
+    
+    public void reverseFFunction(Bit[] subKey) {
+        Bit[][] matrix = convertToMatrix(bits, 4);
+        Boolean temp;
+        for(int i=subKey.length; i>=0; i--) {
+            if(i/4 == 0 || i/4 == 2) { // Pergeseran elemen pada kolom                
+                // Xor perbaris
+                for(int j=0; j<4; j++) {
+                    matrix[i%4][j].setValue(matrix[i%4][j].getValue() ^ subKey[i].getValue());
+                }
+                if(subKey[i].convertToInt() == 0) { // Geser Kanan
+                    temp = matrix[i%4][3].getValue();
+                    for(int j=2; j>=0; j--) {
+                        matrix[i%4][j+1].setValue(matrix[i%4][j].getValue());
+                    }
+                    matrix[i%4][0].setValue(temp);
+                } else { // Geser Kiri
+                    temp = matrix[i%4][0].getValue();
+                    for(int j=1; j<4; j++) {
+                        matrix[i%4][j-1].setValue(matrix[i%4][j].getValue());
+                    }
+                    matrix[i%4][3].setValue(temp);
+                }
+            } else if(i/4 == 1 || i/4 == 3) { // pergeseran elemen per baris
+                // Xor perbaris
+                for(int j=0; j<4; j++) { // Geser Kanan
+                    matrix[j][i%4].setValue(matrix[j][i%4].getValue() ^ subKey[i].getValue());
+                }
+                if(subKey[i].convertToInt() == 0) { // Geser Bawah
+                    temp = matrix[3][i%4].getValue();
+                    for(int j=2; j>=0; j--) {
+                        matrix[j+1][i%4].setValue(matrix[j][i%4].getValue());
+                    }
+                    matrix[0][i%4].setValue(temp);
+                } else { // Geser Atas
+                    temp = matrix[0][i%4].getValue();
+                    for(int j=1; j<4; j++) {
+                        matrix[j-1][i%4].setValue(matrix[j][i%4].getValue());
+                    }
+                    matrix[3][i%4].setValue(temp);
+                }
+            }
         }
-        
     }
     
     public static void main(String args[]) {
@@ -134,17 +177,22 @@ public class Block {
         for(int i=0; i<16; i++) {
             bits[i] = new Bit(((int)(Math.random()*100))%2 == 0 );
         }
-        System.out.println();
         block.setBits(bits);
+        System.out.println("*** Block ***");
         System.out.println(block);
         Bit[] key = new Bit[16];
+//        System.out.println("*** Key ***");
         for(int i=0; i<16; i++) {
             key[i] = new Bit(((int)(Math.random()*10))%2 == 0 );
-            System.out.print(key[i]);
+//            System.out.print(key[i]);
         }
-        System.out.println();
+//        System.out.println();
         block.fFunction(key);
+        System.out.println("*** Hasil ***");
+        System.out.println(block);
+        block.reverseFFunction(key);
+        System.out.println("*** Hasil Reverse ***");
         System.out.println(block);
     }
-    
+
 }
