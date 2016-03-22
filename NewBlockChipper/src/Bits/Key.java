@@ -13,16 +13,19 @@ import java.util.Arrays;
 
 public class Key {
     private Bit bits[];
+    private Block keyBlock[];
     private int size;
     private final int defaultSize = 128;
     private String keyText;
     private String encryptedKey;
     VigenereCipher VC;
     ByteConverter BC;
+    String vigkeytemp;
     
     public Key() {
         size = defaultSize;
         bits = new Bit[size];
+        keyBlock = new Block[8];
         for(int i=0; i<size; i++) {
             bits[i] = new Bit();
         }
@@ -46,6 +49,10 @@ public class Key {
     
     public Bit[] getBits() {
         return bits;
+    }
+    
+    public Block[] getKeyBlock() {
+        return keyBlock;
     }
     
     public String getKeyText() {
@@ -92,9 +99,32 @@ public class Key {
         this.setKeyText(key);
         this.setEncryptedKey();
         
+        byte[] b = encryptedKey.getBytes();
+        System.out.println("keyLength" + keyText.length());
+        System.out.println("encryptedlength "+encryptedKey.length() + " " + encryptedKey);
+        System.out.println("b length" + b.length);
+        Bit[] tempBits = concat (BC.convertByteToBits(b[0]),BC.convertByteToBits(b[1]));
+        Block tempBlock = new Block();
+        tempBlock.setBits(tempBits);
+        keyBlock[0] = tempBlock;
         
-        
-        // Ubah key menjadi Bits dengan panjang s
+        int count = 1;
+        tempBits = null;
+        tempBlock = new Block();
+        for (int i = 2;i<b.length;i++){
+            System.out.println("count"+ count);
+            if ((i - 1) % 2 != 0){
+                tempBits = BC.convertByteToBits(b[i]);
+            }
+            if ((i - 1) % 2 == 0){
+                tempBits = concat(tempBits,BC.convertByteToBits(b[i]));
+                tempBlock.setBits(tempBits);
+                keyBlock[count] = tempBlock;
+                tempBits = null;
+                tempBlock = new Block();
+                count++;
+            } 
+        }
         
     }
     
@@ -123,16 +153,18 @@ public class Key {
         int k = 0;
         for(int j = 0;j<keyVigBit.length;j++){
             tempVigBit[i] = keyVigBit[j];
+            i++;
             if((j+1) % 8 == 0){
                 arrVigKeyByte[k] = BC.convertBitsToByte(tempVigBit);
                 tempVigBit = new Bit[8];
                 k++;
                 i = 0;
             }
-            i++;
+            
         }
         
         String vigKey = new String(arrVigKeyByte,"UTF-8");
+        vigkeytemp = vigKey;
         return vigKey;
     }
     
@@ -145,4 +177,15 @@ public class Key {
         return c;
     }
     
+    public static void main (String[] args) throws UnsupportedEncodingException {
+        Key keyy = new Key();
+        keyy.setKey("nama",128);
+        Block[] a = keyy.getKeyBlock();
+        for(int i = 0;i<a.length;i++){
+            System.out.println(a[i]);
+        }
+        System.out.println("encrypted " + keyy.getEncryptedText());
+        System.out.println("keyText " + keyy.getKeyText());
+        System.out.println("vigkey"+ keyy.vigkeytemp);
+    }
 }
