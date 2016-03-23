@@ -59,11 +59,6 @@ public class Text {
     
     public void setText(String text) {
         // Ubah dari string ke blocks
-/*        
-        public class Block {
-        private Bit[] bits;
-        private int size;
-        private static final int defaultSize = 16;*/
         byte[] b = text.getBytes();
         
         Block tempblock = new Block();
@@ -72,9 +67,20 @@ public class Text {
         arrBlocks.add(tempblock);
         tempBits = null;
         tempblock = new Block();
+        Bit[] endBit = new Bit[8];
+        for (int i=0;i<endBit.length;i++){
+            endBit[i]= new Bit();
+        }
         for (int i = 2;i<b.length;i++){
             if ((i - 1) % 2 != 0){
                 tempBits = BC.convertByteToBits(b[i]);
+            }
+            if (b.length%2 !=0 && i == b.length-1){
+                tempBits = concat(tempBits,endBit);
+                tempblock.setBits(tempBits);
+                arrBlocks.add(tempblock);
+                tempBits = null;
+                tempblock = new Block();
             }
             if ((i - 1) % 2 == 0){
                 tempBits = concat(tempBits,BC.convertByteToBits(b[i]));
@@ -83,6 +89,7 @@ public class Text {
                 tempBits = null;
                 tempblock = new Block();
             } 
+            
         }
     }
     
@@ -120,7 +127,7 @@ public class Text {
     
     public static void main (String[] args) throws UnsupportedEncodingException {
         Text textt = new Text();
-        textt.setText("ABCDEFGH");
+        textt.setText("namas");
         System.out.println(textt.arrBlocks);
         System.out.println(textt.getText());
     }
