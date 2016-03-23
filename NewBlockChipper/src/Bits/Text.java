@@ -11,6 +11,8 @@ import java.util.Arrays;
 import java.lang.Byte;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -58,38 +60,42 @@ public class Text {
     }
     
     public void setText(String text) {
-        // Ubah dari string ke blocks
-        byte[] b = text.getBytes();
-        
-        Block tempblock = new Block();
-        Bit[] tempBits = concat (BC.convertByteToBits(b[0]),BC.convertByteToBits(b[1]));
-        tempblock.setBits(tempBits);
-        arrBlocks.add(tempblock);
-        tempBits = null;
-        tempblock = new Block();
-        Bit[] endBit = new Bit[8];
-        for (int i=0;i<endBit.length;i++){
-            endBit[i]= new Bit();
-        }
-        for (int i = 2;i<b.length;i++){
-            if ((i - 1) % 2 != 0){
-                tempBits = BC.convertByteToBits(b[i]);
-            }
-            if (b.length%2 !=0 && i == b.length-1){
-                tempBits = concat(tempBits,endBit);
-                tempblock.setBits(tempBits);
-                arrBlocks.add(tempblock);
-                tempBits = null;
-                tempblock = new Block();
-            }
-            if ((i - 1) % 2 == 0){
-                tempBits = concat(tempBits,BC.convertByteToBits(b[i]));
-                tempblock.setBits(tempBits);
-                arrBlocks.add(tempblock);
-                tempBits = null;
-                tempblock = new Block();
-            } 
+        try {
+            // Ubah dari string ke blocks
+            byte[] b = text.getBytes("UTF-8");
             
+            Block tempblock = new Block();
+            Bit[] tempBits = concat (BC.convertByteToBits(b[0]),BC.convertByteToBits(b[1]));
+            tempblock.setBits(tempBits);
+            arrBlocks.add(tempblock);
+            tempBits = null;
+            tempblock = new Block();
+            Bit[] endBit = new Bit[8];
+            for (int i=0;i<endBit.length;i++){
+                endBit[i]= new Bit();
+            }
+            for (int i = 2;i<b.length;i++){
+                if ((i - 1) % 2 != 0){
+                    tempBits = BC.convertByteToBits(b[i]);
+                }
+                if (b.length%2 !=0 && i == b.length-1){
+                    tempBits = concat(tempBits,endBit);
+                    tempblock.setBits(tempBits);
+                    arrBlocks.add(tempblock);
+                    tempBits = null;
+                    tempblock = new Block();
+                }
+                if ((i - 1) % 2 == 0){
+                    tempBits = concat(tempBits,BC.convertByteToBits(b[i]));
+                    tempblock.setBits(tempBits);
+                    arrBlocks.add(tempblock);
+                    tempBits = null;
+                    tempblock = new Block();
+                }
+                
+            }
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Text.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
@@ -120,16 +126,21 @@ public class Text {
         for (int i = 0;i<tempArrBit.size();i++){
             arrByte[i] = (BC.convertBitsToByte(tempArrBit.get(i)));
         }
-        result = new String(arrByte,"UTF-8");
-        
+        for(int i=0; i<arrByte.length; i++) {
+            result += (char) arrByte[i];
+//            System.out.print((char) arrByte[i] + " ");
+//            System.out.println((int) arrByte[i]);
+        }
         return result;
     }
     
     public static void main (String[] args) throws UnsupportedEncodingException {
         Text textt = new Text();
-        textt.setText("namas");
+        textt.setText("william sentosa");
         System.out.println(textt.arrBlocks);
-        System.out.println(textt.getText());
+        Text temp = new Text();
+        temp.setBlocks(textt.arrBlocks);
+        System.out.println(temp.getText());
     }
     
 }

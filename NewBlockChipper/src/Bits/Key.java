@@ -100,9 +100,9 @@ public class Key {
         this.setEncryptedKey();
         
         byte[] b = encryptedKey.getBytes();
-        System.out.println("keyLength" + keyText.length());
-        System.out.println("encryptedlength "+encryptedKey.length() + " " + encryptedKey);
-        System.out.println("b length" + b.length);
+//        System.out.println("keyLength" + keyText.length());
+//        System.out.println("encryptedlength "+encryptedKey.length() + " " + encryptedKey);
+//        System.out.println("b length" + b.length);
         Bit[] tempBits = concat (BC.convertByteToBits(b[0]),BC.convertByteToBits(b[1]));
         Block tempBlock = new Block();
         tempBlock.setBits(tempBits);
@@ -112,7 +112,7 @@ public class Key {
         tempBits = null;
         tempBlock = new Block();
         for (int i = 2;i<b.length;i++){
-            System.out.println("count"+ count);
+//            System.out.println("count"+ count);
             if ((i - 1) % 2 != 0){
                 tempBits = BC.convertByteToBits(b[i]);
             }
