@@ -37,7 +37,7 @@ public class VigenereCipher {
         for(int i=0; i<ciphertext.length(); i++){
             if(ciphertext.charAt(i) != ' '){
                 int offsetP = (charSize==26)? ((int)ciphertext.charAt(i)>=65 &&(int)ciphertext.charAt(i)<=90? 65:97):0;
-                res += (char)(Math.floorMod(((int)ciphertext.charAt(i)-offsetP - ((int)key.charAt(j)-offsetK)),charSize)+offsetP);
+                res += (char)((((int)ciphertext.charAt(i)-offsetP - ((int)key.charAt(j)-offsetK)) % charSize)+offsetP);
                 j = (j+1) % keyLength;
             }
             else{

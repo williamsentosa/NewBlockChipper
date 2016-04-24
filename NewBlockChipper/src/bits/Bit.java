@@ -1,4 +1,4 @@
-package Bits;
+package bits;
 
 /**
  *

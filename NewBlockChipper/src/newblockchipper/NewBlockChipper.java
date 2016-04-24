@@ -5,11 +5,13 @@
  */
 package newblockchipper;
 
-import Bits.Bit;
-import Bits.Block;
-import Bits.Key;
-import Bits.Text;
+import bits.Bit;
+import bits.Block;
+import bits.Key;
+import bits.Text;
 import java.io.UnsupportedEncodingException;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,6 +97,74 @@ public class NewBlockChipper {
         return null;
     }
     
+    public String ecb() {
+        String result = "";
+        ArrayList<Block> blocks = text.getBlocks();
+        Bit[] bitKey = key.getBits();
+        ArrayList<Bit[]> subKey = this.divideBits(bitKey);
+        for(int i=0; i<blocks.size(); i++) {
+            blocks.get(i).fFunction(subKey.get(0));
+        }
+        Text temp = new Text();
+        temp.setBlocks(blocks);
+        System.out.println(blocks);
+        try {
+            return temp.getText();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(NewBlockChipper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+   
+    public String cbc() {
+        String result = "";
+        ArrayList<Block> blocks = text.getBlocks();
+        Bit[] bitKey = key.getBits();
+        ArrayList<Bit[]> subKey = this.divideBits(bitKey);
+        Bit[] tempKey = subKey.get(0);
+        for(int i=0; i<blocks.size(); i++) {
+            blocks.get(i).fFunction(tempKey);
+            tempKey = blocks.get(i).getBits();
+        }
+        Text temp = new Text();
+        temp.setBlocks(blocks);
+        System.out.println(blocks);
+        try {
+            return temp.getText();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(NewBlockChipper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
+    public String cfb() {
+        String result = "";
+        ArrayList<Block> blocks = text.getBlocks();
+        Bit[] bitKey = key.getBits();
+        ArrayList<Bit[]> subKey = this.divideBits(bitKey);
+        Bit[] tempKey = subKey.get(0);
+        Block b = new Block(blocks.get(0));
+        Block[] p = new Block[blocks.size()];
+        for(int i=0; i<blocks.size(); i++) {
+            p[i] = new Block(blocks.get(i));
+        }
+        for(int i=1; i<blocks.size(); i++) {
+            b.fFunction(tempKey);
+            blocks.set(i, b);
+            blocks.get(i).xor(p[i]);
+            b = new Block(blocks.get(i));
+        }
+        Text temp = new Text();
+        temp.setBlocks(blocks);
+        System.out.println(blocks);
+        try {
+            return temp.getText();
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(NewBlockChipper.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return result;
+    }
+    
     public String decrypt() {
         ArrayList<Block> blocks = text.getBlocks();
         System.out.println(blocks);
@@ -137,12 +207,16 @@ public class NewBlockChipper {
      */
     public static void main(String[] args) {
         String text = "william sentosa dan randi chilyon alfianto";
-        System.out.println("Panjang string : " + text.length());
         String key = "ifitb";
         NewBlockChipper chipper;
         chipper = new NewBlockChipper(text, key);
-        
-        String result = chipper.encrypt();
+        Instant first = Instant.now();
+        String result = chipper.cfb();
+        Instant second = Instant.now();
+        Duration duration = Duration.between(first, second);
+        System.out.println(result);
+        System.out.println("Duration : " + duration.getNano() + " ns");
+        result = chipper.encrypt();
         System.out.println("Panjang result : " + result.length());
         System.out.println("*** Chipper ***");
         System.out.println(result);
